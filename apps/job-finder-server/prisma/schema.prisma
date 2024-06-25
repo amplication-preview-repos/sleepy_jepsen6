@@ -1,0 +1,75 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Job {
+  assignedWorker String?
+  client         String?
+  createdAt      DateTime        @default(now())
+  description    String?
+  endTime        DateTime?
+  id             String          @id @default(cuid())
+  jobType        EnumJobJobType?
+  payments       Payment[]
+  price          Float?
+  startTime      DateTime?
+  status         EnumJobStatus?
+  title          String?
+  uberRequests   UberRequest[]
+  updatedAt      DateTime        @updatedAt
+}
+
+model Payment {
+  amount    Float?
+  createdAt DateTime  @default(now())
+  date      DateTime?
+  id        String    @id @default(cuid())
+  job       Job?      @relation(fields: [jobId], references: [id])
+  jobId     String?
+  updatedAt DateTime  @updatedAt
+  worker    String?
+}
+
+model UberRequest {
+  createdAt       DateTime               @default(now())
+  dropOffLocation String?
+  id              String                 @id @default(cuid())
+  job             Job?                   @relation(fields: [jobId], references: [id])
+  jobId           String?
+  passenger       String?
+  pickupLocation  String?
+  requestTime     DateTime?
+  status          EnumUberRequestStatus?
+  updatedAt       DateTime               @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  fullName  String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  phone     String?
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumJobJobType {
+  Option1
+}
+
+enum EnumJobStatus {
+  Option1
+}
+
+enum EnumUberRequestStatus {
+  Option1
+}
